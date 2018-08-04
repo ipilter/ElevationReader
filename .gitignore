@@ -1,0 +1,4 @@
+x64/
+dependencies/
+.vs/
+*.VC.db
