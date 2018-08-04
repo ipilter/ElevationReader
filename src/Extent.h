@@ -32,6 +32,14 @@ public:
   {
     return mBottomRight;
   }
+  const Geo topRight() const
+  {
+    return Geo(mBottomRight.lon, mTopLeft.lat);
+  }
+  const Geo bottomLeft() const
+  {
+    return Geo(mTopLeft.lon, mBottomRight.lat);
+  }
   double left() const
   {
     return mTopLeft.lon;
