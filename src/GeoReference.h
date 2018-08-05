@@ -16,7 +16,7 @@ public:
                            , geo[5], geo[0], geo[3])
     , mImageSize(width, height)
     , mExtent(imgToGeo(Vec2i(0, 0))
-              , imgToGeo(mImageSize))
+    , imgToGeo(mImageSize))
   { }
   Vec2i geoToImg(const Geo& geo) const
   {

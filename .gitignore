@@ -2,3 +2,4 @@ x64/
 dependencies/
 .vs/
 *.VC.*
+*.vcxproj.user
