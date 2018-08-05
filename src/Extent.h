@@ -59,6 +59,8 @@ public:
 private:
   void validate() const
   {
+    mTopLeft.validate();
+    mBottomRight.validate();
     if(mTopLeft.lon > mBottomRight.lon
        || mTopLeft.lat < mBottomRight.lat)
     {

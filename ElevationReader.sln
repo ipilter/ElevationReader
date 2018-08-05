@@ -5,6 +5,8 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ElevationReader", "ElevationReader.vcxproj", "{450B1114-2A1A-49EC-851B-5C7988A50BED}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UnitTest", "UnitTest\UnitTest.vcxproj", "{518162FA-701B-467B-9105-2BFB0D5D4AE5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,10 @@ Global
 		{450B1114-2A1A-49EC-851B-5C7988A50BED}.Debug|x64.Build.0 = Debug|x64
 		{450B1114-2A1A-49EC-851B-5C7988A50BED}.Release|x64.ActiveCfg = Release|x64
 		{450B1114-2A1A-49EC-851B-5C7988A50BED}.Release|x64.Build.0 = Release|x64
+		{518162FA-701B-467B-9105-2BFB0D5D4AE5}.Debug|x64.ActiveCfg = Debug|x64
+		{518162FA-701B-467B-9105-2BFB0D5D4AE5}.Debug|x64.Build.0 = Debug|x64
+		{518162FA-701B-467B-9105-2BFB0D5D4AE5}.Release|x64.ActiveCfg = Release|x64
+		{518162FA-701B-467B-9105-2BFB0D5D4AE5}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
