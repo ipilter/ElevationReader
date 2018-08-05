@@ -70,8 +70,13 @@ TEST(testGeoReference, inverseTransformTest)
       return gt_out
 */
 
-  double inverseTransform[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+  Mat32 mat32(transform[1], transform[2], transform[4]
+               , transform[5], transform[0], transform[3]);
 
+  Mat33 mat33(transform[1], transform[2], transform[4]
+               , transform[5], transform[0], transform[3]
+               , 0, 0, 1);
+  double inverseTransform[6] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
   GeoReference geoReference(transform, inverseTransform, imageSize.x, imageSize.y);
 
   EXPECT_EQ(Geo(tileSize.x, tileSize.y), geoReference.imgToGeo(Vec2i(imageSize.x, 0)));

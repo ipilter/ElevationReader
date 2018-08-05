@@ -6,7 +6,8 @@
 typedef glm::ivec2 Vec2i;
 typedef glm::dvec2 Vec2;
 typedef glm::dvec3 Vec3;
-typedef glm::mat3x2 Mat3x2;
+typedef glm::mat3x2 Mat32;
+typedef glm::mat3x3 Mat33;
 
 inline std::ostream& operator << (std::ostream& stream, const Vec2i& v)
 {

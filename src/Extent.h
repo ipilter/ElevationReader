@@ -71,3 +71,8 @@ private:
   Geo mTopLeft;
   Geo mBottomRight;
 };
+
+inline std::ostream& operator << (std::ostream& stream, const Extent& extent)
+{
+  return stream << "TopLeft = " << extent.topLeft() << " BottomRight = " << extent.bottomRight();
+}

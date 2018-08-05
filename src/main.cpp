@@ -10,7 +10,26 @@
 template<class T> T parseNumber(const std::string& str);
 GeoReference getGeoReference(const std::string& geoTiffPath);
 
-
+class Tile
+{
+public:
+  Tile(const GeoCell& geoCell, const Extent& extent)
+    : mGeoCell(geoCell)
+    , mExtent(extent)
+  {}
+public:
+  const GeoCell& geoCell() const
+  {
+    return mGeoCell;
+  }
+  const Extent& extent() const
+  {
+    return mExtent;
+  }
+private:
+  GeoCell mGeoCell;
+  Extent mExtent;
+};
 
 // dsmRoot  lat       lon       lat       lon
 // d:\dsm   46.840104 17.482264 46.820836 17.513521
@@ -46,22 +65,19 @@ int main(int argc, char* argv[])
     int x0 = static_cast<int>(std::floor(inputExtent.topLeft().lon));
     int y0 = static_cast<int>(std::floor(inputExtent.bottomRight().lat));
 
-    std::vector<GeoCell> geoCells;
+    typedef std::vector<Tile> TileVector;
+    TileVector tiles;
     for (int y = y0; y <= y1; ++y)
     { 
       for (int x = x0; x <= x1; ++x)
       {
-        geoCells.push_back(GeoCell(x, y));
+        tiles.push_back(Tile(GeoCell(x, y), Extent(0.0, 1.0, 1.0, 0.0)));
       }
     }
 
-    /*
-    static_cast<int>(std::floor(inputExtent.topLeft().lon))  , static_cast<int>(std::floor(inputExtent.bottomRight().lat))
-    */
-
-    for (std::vector<GeoCell>::const_iterator it(geoCells.begin()); it != geoCells.end(); ++it)
+    for (TileVector::const_iterator it(tiles.begin()); it != tiles.end(); ++it)
     {
-      std::cout << "geocell = " << *it << std::endl;
+      std::cout << "Tile: geocell = " << it->geoCell() << " Extent: " << it->extent() << std::endl;
     }
 
     //const std::string dsmPath(dsmRoot + "\\" + geocell.asString() + "_AVE_DSM.tif");

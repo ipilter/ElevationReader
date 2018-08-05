@@ -17,7 +17,15 @@ public:
     , mImageSize(width, height)
     , mExtent(imgToGeo(Vec2i(0, 0))
     , imgToGeo(mImageSize))
-  { }
+  {
+    Mat33 mat33(geo[1], geo[2], geo[4]
+                , geo[5], geo[0], geo[3]
+                , 0, 0, 1);
+    Mat33 imat33 = glm::inverse(mat33);
+    mGeoToImageTransform = Mat32(Vec2(imat33[0].x, imat33[0].y)
+                                 , Vec2(imat33[0].y, imat33[1].y)
+                                 , Vec2(imat33[0].x, imat33[2].y));
+  }
   Vec2i geoToImg(const Geo& geo) const
   {
     return Vec2i(mGeoToImageTransform * Vec3(geo.lon, geo.lat, 1.0));
@@ -36,8 +44,8 @@ public:
     return mExtent;
   }
 private:
-  Mat3x2 mGeoToImageTransform;
-  Mat3x2 mImageToGeoTransform;
+  Mat32 mGeoToImageTransform;
+  Mat32 mImageToGeoTransform;
   Vec2i mImageSize;
   Extent mExtent;
 };
