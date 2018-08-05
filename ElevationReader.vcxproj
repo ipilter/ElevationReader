@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Floating.h" />
     <ClInclude Include="src\Extent.h" />
+    <ClInclude Include="src\Floating.h" />
     <ClInclude Include="src\Geo.h" />
     <ClInclude Include="src\GeoCell.h" />
     <ClInclude Include="src\GeoReference.h" />

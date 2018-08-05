@@ -26,7 +26,7 @@
     <ClInclude Include="src\Types.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="Floating.h">
+    <ClInclude Include="src\Floating.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
