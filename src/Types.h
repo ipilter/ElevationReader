@@ -23,3 +23,8 @@ inline std::ostream& operator << (std::ostream& stream, const Vec3& v)
 {
   return stream << std::fixed << "[" << v.x << ", " << v.y << ", " << v.z << "]";
 }
+
+inline Mat32 inverse(const Mat32& m)
+{
+  return Mat32(glm::inverse(Mat33(m))); 
+}

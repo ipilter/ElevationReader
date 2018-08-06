@@ -7,24 +7,16 @@ class GeoReference
 {
 public:
   GeoReference(double* geo
-               , double* inv
                , int width
                , int height)
-    : mGeoToImageTransform(inv[1], inv[2], inv[4]
-                           , inv[5], inv[0], inv[3])
-    , mImageToGeoTransform(geo[1], geo[2], geo[4]
-                           , geo[5], geo[0], geo[3])
+    : mGeoToImageTransform(inv[1], inv[2]
+                           , inv[4], inv[5]
+                           , inv[0], inv[3])
+    , mImageToGeoTransform(inverse(mGeoToImageTransform))
     , mImageSize(width, height)
     , mExtent(imgToGeo(Vec2i(0, 0))
     , imgToGeo(mImageSize))
   {
-    Mat33 mat33(geo[1], geo[2], geo[4]
-                , geo[5], geo[0], geo[3]
-                , 0, 0, 1);
-    Mat33 imat33 = glm::inverse(mat33);
-    mGeoToImageTransform = Mat32(Vec2(imat33[0].x, imat33[0].y)
-                                 , Vec2(imat33[0].y, imat33[1].y)
-                                 , Vec2(imat33[0].x, imat33[2].y));
   }
   Vec2i geoToImg(const Geo& geo) const
   {

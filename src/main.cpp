@@ -31,6 +31,8 @@ private:
   Extent mExtent;
 };
 
+typedef std::vector<Tile> TileVector;
+
 // dsmRoot  lat       lon       lat       lon
 // d:\dsm   46.840104 17.482264 46.820836 17.513521
 int main(int argc, char* argv[])
@@ -41,6 +43,7 @@ int main(int argc, char* argv[])
     {
       throw std::runtime_error("missing parameter! Usage: dsmRoot top left bottom right");
     }
+
     // initialize GDAL
     GDALRegister_GTiff();
     CPLSetErrorHandler(CPLQuietErrorHandler);
@@ -58,14 +61,13 @@ int main(int argc, char* argv[])
     // all the four corner of the input must be checked for geocell due to all four might contained in a different geocell
     // the input in one geocell only if all the four corners in the same geocell..
 
-    // calculate the geocell for this extent
-    int x1 = static_cast<int>(std::floor(inputExtent.bottomRight().lon));
-    int y1 = static_cast<int>(std::floor(inputExtent.topLeft().lat));
-    
+    // calculate the tile(s) for this extent
     int x0 = static_cast<int>(std::floor(inputExtent.topLeft().lon));
     int y0 = static_cast<int>(std::floor(inputExtent.bottomRight().lat));
 
-    typedef std::vector<Tile> TileVector;
+    int x1 = static_cast<int>(std::floor(inputExtent.bottomRight().lon));
+    int y1 = static_cast<int>(std::floor(inputExtent.topLeft().lat));
+
     TileVector tiles;
     for (int y = y0; y <= y1; ++y)
     { 
@@ -80,6 +82,8 @@ int main(int argc, char* argv[])
       std::cout << "Tile: geocell = " << it->geoCell() << " Extent: " << it->extent() << std::endl;
     }
 
+	
+	// For all tile in tiles
     //const std::string dsmPath(dsmRoot + "\\" + geocell.asString() + "_AVE_DSM.tif");
 
     //std::cout << "Reading file " << dsmPath << std::endl;
@@ -114,27 +118,24 @@ int main(int argc, char* argv[])
 
 GeoReference getGeoReference(const std::string& geoTiffPath)
 {
-    GDALDataset* pTiffDataSet = (GDALDataset*)GDALOpen(geoTiffPath.c_str(), static_cast<GDALAccess>(GA_ReadOnly));
-    if (!pTiffDataSet)
-    {
-      throw std::runtime_error(std::string("could not open file: ") + geoTiffPath);
-    }
+  GDALDataset* pTiffDataSet((GDALDataset*)GDALOpen(geoTiffPath.c_str(), static_cast<GDALAccess>(GA_ReadOnly)));
+  if (!pTiffDataSet)
+  {
+    throw std::runtime_error(std::string("could not open file: ") + geoTiffPath);
+  }
 
-    const int width = pTiffDataSet->GetRasterXSize();
-    const int height = pTiffDataSet->GetRasterYSize();
+  const int width(pTiffDataSet->GetRasterXSize());
+  const int height(pTiffDataSet->GetRasterYSize());
 
-    double geoTransform[6] = { 0 };
-    if (pTiffDataSet->GetGeoTransform(geoTransform) != CE_None)
-    {
-      throw std::runtime_error(std::string("could not get geo transform from image"));
-    }
-    GDALClose(pTiffDataSet);
-    pTiffDataSet = NULL;
+  double geoTransform[6] = { 0 };
+  if (pTiffDataSet->GetGeoTransform(geoTransform) != CE_None)
+  {
+    throw std::runtime_error(std::string("could not get geo transform from image"));
+  }
+  GDALClose(pTiffDataSet);
+  pTiffDataSet = NULL;
 
-    double invGeoTransform[6] = { 0 };
-    GDALInvGeoTransform(geoTransform, invGeoTransform);
-
-    return GeoReference(geoTransform, invGeoTransform, width, height);
+  return GeoReference(geoTransform, width, height);
 }
 
 template<class T>
