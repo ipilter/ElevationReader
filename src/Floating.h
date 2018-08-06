@@ -17,3 +17,8 @@ inline bool Equal(const double a, const double b, const double tolerance = 0.000
 {
   return RelDif(a, b) <= tolerance;
 }
+
+inline int Round(const double d)
+{
+  return static_cast<int>(std::floor(d));
+}

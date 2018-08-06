@@ -52,28 +52,30 @@ int main(int argc, char* argv[])
 
     // input is lat-lon but we store lon-lat(x, y) order
     const Extent inputExtent(parseNumber<double>(argv[3]), parseNumber<double>(argv[2]), parseNumber<double>(argv[5]), parseNumber<double>(argv[4]));
-    
-    std::cout << "top left = " << inputExtent.topLeft() << std::endl;
-    std::cout << "bottom right = " << inputExtent.bottomRight() << std::endl;
 
+    std::cout << "Input extent = " << inputExtent << std::endl;
 
     // iTODO now it is using the input region`s left bottom coordinate to figure out the geocell but this is not correct.
     // all the four corner of the input must be checked for geocell due to all four might contained in a different geocell
     // the input in one geocell only if all the four corners in the same geocell..
 
     // calculate the tile(s) for this extent
-    int x0 = static_cast<int>(std::floor(inputExtent.topLeft().lon));
-    int y0 = static_cast<int>(std::floor(inputExtent.bottomRight().lat));
+    const int xMin(Round(inputExtent.topLeft().lon));      // bottom left corner of the extent is the minimum geocell coordinate
+    const int yMin(Round(inputExtent.bottomRight().lat));
 
-    int x1 = static_cast<int>(std::floor(inputExtent.bottomRight().lon));
-    int y1 = static_cast<int>(std::floor(inputExtent.topLeft().lat));
+    const int xMax(Round(inputExtent.bottomRight().lon));  // top right  corner of the extent is the maximum geocell coordinate
+    const int yMax(Round(inputExtent.topLeft().lat));
 
     TileVector tiles;
-    for (int y = y0; y <= y1; ++y)
+    for (int y = yMin; y <= yMax; ++y)
     { 
-      for (int x = x0; x <= x1; ++x)
+      for (int x = xMin; x <= xMax; ++x)
       {
-        tiles.push_back(Tile(GeoCell(x, y), Extent(0.0, 1.0, 1.0, 0.0)));
+        // calculate the intersection if the input extent and this tile
+        GeoCell geoCell(x, y);
+        Extent extent(0.0, 1.0, 1.0, 0.0)
+
+        tiles.push_back(Tile(geoCell, extent));
       }
     }
 
@@ -82,8 +84,10 @@ int main(int argc, char* argv[])
       std::cout << "Tile: geocell = " << it->geoCell() << " Extent: " << it->extent() << std::endl;
     }
 
-	
 	// For all tile in tiles
+	//  Open the tif image corresponding to the given geocell
+	//  Read elevation data from the image inside the tile`s extent
+
     //const std::string dsmPath(dsmRoot + "\\" + geocell.asString() + "_AVE_DSM.tif");
 
     //std::cout << "Reading file " << dsmPath << std::endl;
