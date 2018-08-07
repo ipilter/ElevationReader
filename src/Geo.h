@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Types.h"
 #include "Floating.h"
 
 struct Geo
@@ -12,6 +13,10 @@ struct Geo
       , const double y)
     : lon(x)
     , lat(y)
+  { }
+  Geo(const Vec2& v)
+    : lon(v.x)
+    , lat(v.y)
   { }
   void validate() const
   {

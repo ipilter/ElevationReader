@@ -9,23 +9,20 @@ public:
   GeoReference(double* geo
                , int width
                , int height)
-    : mGeoToImageTransform(inv[1], inv[2]
-                           , inv[4], inv[5]
-                           , inv[0], inv[3])
-    , mImageToGeoTransform(inverse(mGeoToImageTransform))
+    : mImageToGeoTransform(geo[1], geo[2]
+                           , geo[4], geo[5]
+                           , geo[0], geo[3])
+    , mGeoToImageTransform(inverse(mImageToGeoTransform))
     , mImageSize(width, height)
-    , mExtent(imgToGeo(Vec2i(0, 0))
-    , imgToGeo(mImageSize))
-  {
-  }
+    , mExtent(imgToGeo(Vec2i(0, 0)), imgToGeo(mImageSize))
+  { }
   Vec2i geoToImg(const Geo& geo) const
   {
     return Vec2i(mGeoToImageTransform * Vec3(geo.lon, geo.lat, 1.0));
   }
   Geo imgToGeo(const Vec2i& img) const
   {
-    const Vec2 vi(mImageToGeoTransform * Vec3(img, 1.0));
-    return Geo(vi.x, vi.y);
+    return Geo(mImageToGeoTransform * Vec3(img, 1.0));
   }
   const Vec2i& imageSize() const
   {
@@ -36,8 +33,8 @@ public:
     return mExtent;
   }
 private:
-  Mat32 mGeoToImageTransform;
-  Mat32 mImageToGeoTransform;
-  Vec2i mImageSize;
-  Extent mExtent;
+  const Mat32 mImageToGeoTransform;
+  const Mat32 mGeoToImageTransform;
+  const Vec2i mImageSize;
+  const Extent mExtent;
 };

@@ -71,10 +71,10 @@ int main(int argc, char* argv[])
     { 
       for (int x = xMin; x <= xMax; ++x)
       {
-        // calculate the intersection if the input extent and this tile
-        GeoCell geoCell(x, y);
-        Extent extent(0.0, 1.0, 1.0, 0.0)
+        GeoCell geoCell(x, y);  // Geocell bottom left corner
+        Extent extent(x, y + 1.0, x + 1.0, y);  // Geocell extent tl-br 1 by 1 deg  // iTODO a geocell spans across 0..1 deg but 1 is not part of the geocell but the next one
 
+        // calculate the intersection if the input extent and this tile
         tiles.push_back(Tile(geoCell, extent));
       }
     }
