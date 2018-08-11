@@ -1,6 +1,8 @@
 #pragma once
 
 #include <stdexcept>
+#include <map>
+#include <vector>
 
 #include "Geo.h"
 
@@ -56,6 +58,10 @@ public:
   {
     return mBottomRight.lat;
   }
+  Extent intersect(const Extent& rhs) const
+  {
+    return Extent(0, 0, 0, 0);
+  }
 private:
   void validate() const
   {
@@ -75,4 +81,9 @@ private:
 inline std::ostream& operator << (std::ostream& stream, const Extent& extent)
 {
   return stream << "TopLeft = " << extent.topLeft() << " BottomRight = " << extent.bottomRight();
+}
+
+inline bool operator == (const Extent& a, const Extent& b)
+{
+  return a.topLeft() == b.topLeft() && a.bottomRight() == b.bottomRight();
 }

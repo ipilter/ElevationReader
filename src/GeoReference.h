@@ -1,10 +1,14 @@
 #pragma once
 
+#include <memory>
+
 #include "Types.h"
 #include "Extent.h"
 
 class GeoReference
 {
+public:
+  typedef std::shared_ptr<GeoReference> Ptr;
 public:
   GeoReference(double* geo
                , int width

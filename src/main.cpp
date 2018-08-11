@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <iomanip>
+#include <memory>
 
 #include <gdal_priv.h>
 
@@ -8,17 +9,24 @@
 #include "GeoCell.h"
 
 template<class T> T parseNumber(const std::string& str);
-GeoReference getGeoReference(const std::string& geoTiffPath);
+GeoReference::Ptr createGeoReference(const std::string& geoTiffPath);
+
+//inputExtent -> tile(s) -> geocell -> georeference -> geotif
 
 class Tile
 {
 public:
-  Tile(const GeoCell& geoCell, const Extent& extent)
+  typedef std::shared_ptr<Tile> Ptr;
+  typedef std::vector<Ptr> Vector;
+public:
+  Tile(const GeoCell::Ptr& geoCell, const Extent& extent)
     : mGeoCell(geoCell)
     , mExtent(extent)
-  {}
+  { }
+  ~Tile()
+  { }
 public:
-  const GeoCell& geoCell() const
+  const GeoCell::Ptr geoCell() const
   {
     return mGeoCell;
   }
@@ -27,11 +35,47 @@ public:
     return mExtent;
   }
 private:
-  GeoCell mGeoCell;
+  GeoCell::Ptr mGeoCell;
   Extent mExtent;
 };
 
-typedef std::vector<Tile> TileVector;
+class GeoCellFactory
+{
+public:
+  GeoCellFactory(const std::string& dsmRoot)
+    : mDsmRoot(createRoot(dsmRoot))
+    , mDsmEnd("_AVE_DSM")
+    , mDsmExtension(".tif")
+  {}
+public:
+  GeoCell::Ptr create(int x, int y)
+  {
+    GeoCell::Ptr geoCell(new GeoCell(x, y));
+
+    const std::string dsmPath(mDsmRoot + geoCell->asString() + mDsmEnd + mDsmExtension);
+    std::cout << "Reading file " << dsmPath << std::endl;
+
+    geoCell->setGeoReference(createGeoReference(dsmPath));
+
+    std::cout << "created " << *geoCell << std::endl;
+
+    return geoCell;
+  }
+private:
+  std::string createRoot(const std::string& dsmRoot)
+  {
+    std::string root(dsmRoot);
+    if (root[root.size() - 1] == '\\')
+    {
+      return dsmRoot;
+    }
+    return root += "\\";
+  }
+private:
+  const std::string mDsmRoot;
+  const std::string mDsmEnd;
+  const std::string mDsmExtension;
+};
 
 // dsmRoot  lat       lon       lat       lon
 // d:\dsm   46.840104 17.482264 46.820836 17.513521
@@ -55,10 +99,6 @@ int main(int argc, char* argv[])
 
     std::cout << "Input extent = " << inputExtent << std::endl;
 
-    // iTODO now it is using the input region`s left bottom coordinate to figure out the geocell but this is not correct.
-    // all the four corner of the input must be checked for geocell due to all four might contained in a different geocell
-    // the input in one geocell only if all the four corners in the same geocell..
-
     // calculate the tile(s) for this extent
     const int xMin(Round(inputExtent.topLeft().lon));      // bottom left corner of the extent is the minimum geocell coordinate
     const int yMin(Round(inputExtent.bottomRight().lat));
@@ -66,51 +106,37 @@ int main(int argc, char* argv[])
     const int xMax(Round(inputExtent.bottomRight().lon));  // top right  corner of the extent is the maximum geocell coordinate
     const int yMax(Round(inputExtent.topLeft().lat));
 
-    TileVector tiles;
-    for (int y = yMin; y <= yMax; ++y)
-    { 
-      for (int x = xMin; x <= xMax; ++x)
+    GeoCell::Vector geoCells;
+    {
+      GeoCellFactory geoCellFactory(dsmRoot);
+      for (int y = yMin; y <= yMax; ++y)
       {
-        GeoCell geoCell(x, y);  // Geocell bottom left corner
-        Extent extent(x, y + 1.0, x + 1.0, y);  // Geocell extent tl-br 1 by 1 deg  // iTODO a geocell spans across 0..1 deg but 1 is not part of the geocell but the next one
-
-        // calculate the intersection if the input extent and this tile
-        tiles.push_back(Tile(geoCell, extent));
+        for (int x = xMin; x <= xMax; ++x)
+        {
+          GeoCell::Ptr geocellPtr = geoCellFactory.create(x, y);  // Geocell bottom left corner
+          geoCells.push_back(geocellPtr);
+        }
       }
     }
 
-    for (TileVector::const_iterator it(tiles.begin()); it != tiles.end(); ++it)
+    Tile::Vector tiles;
+    for (GeoCell::Vector::const_iterator it(geoCells.begin()); it != geoCells.end(); ++it)
     {
-      std::cout << "Tile: geocell = " << it->geoCell() << " Extent: " << it->extent() << std::endl;
+      const GeoCell::Ptr& pGeoCell((*it));
+
+      // calculate the intersection of the input extent and this tile
+      const Extent tileExtent(inputExtent.intersect(pGeoCell->geoReference()->extent()));
+      tiles.push_back(Tile::Ptr(new Tile(pGeoCell, tileExtent)));
+    }
+
+    for (Tile::Vector::const_iterator it(tiles.begin()); it != tiles.end(); ++it)
+    {
+      std::cout << "Tile: geocell = " << *(*it)->geoCell() << " Extent: " << (*it)->extent() << std::endl;
     }
 
 	// For all tile in tiles
 	//  Open the tif image corresponding to the given geocell
 	//  Read elevation data from the image inside the tile`s extent
-
-    //const std::string dsmPath(dsmRoot + "\\" + geocell.asString() + "_AVE_DSM.tif");
-
-    //std::cout << "Reading file " << dsmPath << std::endl;
-    //const GeoReference geoReference(getGeoReference(dsmPath));
-
-    //std::cout << "GeoTiff boundaries" << std::endl
-    //          << std::fixed << "  left: " << geoReference.extent().left() << std::endl
-    //          << std::fixed << "  top: " << geoReference.extent().top() << std::endl
-    //          << std::fixed << "  right: " << geoReference.extent().right() << std::endl
-    //          << std::fixed << "  bottom: " << geoReference.extent().bottom() << std::endl;
-
-    //std::cout << "GeoTiff pixels" << std::endl
-    //          << "  top left: " << geoReference.geoToImg(geoReference.extent().topLeft()) << std::endl
-    //          << "  top right: " << geoReference.geoToImg(Geo(geoReference.extent().right(), geoReference.extent().top())) << std::endl
-    //          << "  bottom left: " << geoReference.geoToImg(Geo(geoReference.extent().left(), geoReference.extent().bottom())) << std::endl
-    //          << "  bottom right: " << geoReference.geoToImg(geoReference.extent().bottomRight()) << std::endl;
-
-    //std::cout << "Input region pixels" << std::endl
-    //          << "  top left: " << geoReference.geoToImg(inputExtent.topLeft()) << std::endl
-    //          << "  top right: " << geoReference.geoToImg(Geo(inputExtent.right(), inputExtent.top())) << std::endl
-    //          << "  bottom left: " << geoReference.geoToImg(Geo(inputExtent.left(), inputExtent.bottom())) << std::endl
-    //          << "  bottom right: " << geoReference.geoToImg(inputExtent.bottomRight()) << std::endl;
-
     std::cout << "Done." << std::endl;
   }
   catch (const std::exception& e)
@@ -120,7 +146,7 @@ int main(int argc, char* argv[])
   return 0;
 }
 
-GeoReference getGeoReference(const std::string& geoTiffPath)
+GeoReference::Ptr createGeoReference(const std::string& geoTiffPath)
 {
   GDALDataset* pTiffDataSet((GDALDataset*)GDALOpen(geoTiffPath.c_str(), static_cast<GDALAccess>(GA_ReadOnly)));
   if (!pTiffDataSet)
@@ -139,7 +165,7 @@ GeoReference getGeoReference(const std::string& geoTiffPath)
   GDALClose(pTiffDataSet);
   pTiffDataSet = NULL;
 
-  return GeoReference(geoTransform, width, height);
+  return GeoReference::Ptr(new GeoReference(geoTransform, width, height));
 }
 
 template<class T>
@@ -152,3 +178,22 @@ T parseNumber(const std::string& str)
   }
   return t;
 }
+
+//std::cout << "GeoTiff boundaries" << std::endl
+//          << std::fixed << "  left: " << geoReference.extent().left() << std::endl
+//          << std::fixed << "  top: " << geoReference.extent().top() << std::endl
+//          << std::fixed << "  right: " << geoReference.extent().right() << std::endl
+//          << std::fixed << "  bottom: " << geoReference.extent().bottom() << std::endl;
+
+//std::cout << "GeoTiff pixels" << std::endl
+//          << "  top left: " << geoReference.geoToImg(geoReference.extent().topLeft()) << std::endl
+//          << "  top right: " << geoReference.geoToImg(Geo(geoReference.extent().right(), geoReference.extent().top())) << std::endl
+//          << "  bottom left: " << geoReference.geoToImg(Geo(geoReference.extent().left(), geoReference.extent().bottom())) << std::endl
+//          << "  bottom right: " << geoReference.geoToImg(geoReference.extent().bottomRight()) << std::endl;
+
+//std::cout << "Input region pixels" << std::endl
+//          << "  top left: " << geoReference.geoToImg(inputExtent.topLeft()) << std::endl
+//          << "  top right: " << geoReference.geoToImg(Geo(inputExtent.right(), inputExtent.top())) << std::endl
+//          << "  bottom left: " << geoReference.geoToImg(Geo(inputExtent.left(), inputExtent.bottom())) << std::endl
+//          << "  bottom right: " << geoReference.geoToImg(inputExtent.bottomRight()) << std::endl;
+

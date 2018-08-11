@@ -3,11 +3,18 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <memory>
+
+#include "GeoReference.h"
 
 #include "Types.h"
 
 struct GeoCell
 {
+  typedef GeoCell Self;
+  typedef std::shared_ptr<Self> Ptr;
+  typedef std::vector<Ptr> Vector;
+
   GeoCell()
     : bottomLeft(0, 0)
   {
@@ -20,8 +27,16 @@ struct GeoCell
   }
   explicit GeoCell(const Vec2i& v)
     : bottomLeft(v)
-  {
+  { 
     validate();
+  }
+  void setGeoReference(const GeoReference::Ptr& geoReference)
+  {
+    mGeoReference = geoReference;
+  }
+  const GeoReference::Ptr& geoReference() const
+  {
+    return mGeoReference;
   }
   std::string asString() const
   {
@@ -43,11 +58,12 @@ private:
     static const int maxLat(89);
     if (bottomLeft.x < -maxLon || bottomLeft.x > maxLon || bottomLeft.y < -maxLat || bottomLeft.y > maxLat)
     {
-      throw std::runtime_error("invalid geocell: " + asString());
+      throw std::runtime_error("invalid geocell coordinate: " + asString());
     }
   }
 public:
   Vec2i bottomLeft;
+  GeoReference::Ptr mGeoReference;
 };
 
 inline std::ostream& operator << (std::ostream& stream, const GeoCell& geocell)
