@@ -30,7 +30,7 @@ TEST(testExtent, constructionFailTest)
   }
 }
 
-TEST(testExtent, unionTest)
+TEST(testExtent, intersectTest)
 {
   TopLeftBottomRightList tlbrList;
   tlbrList.push_back(std::make_pair(Geo(0, 2), Geo(2, 0)));

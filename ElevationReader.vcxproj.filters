@@ -29,6 +29,9 @@
     <ClInclude Include="src\Floating.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\Line.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">

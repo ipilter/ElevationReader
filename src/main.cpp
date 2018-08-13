@@ -51,14 +51,7 @@ public:
   GeoCell::Ptr create(int x, int y)
   {
     GeoCell::Ptr geoCell(new GeoCell(x, y));
-
-    const std::string dsmPath(mDsmRoot + geoCell->asString() + mDsmEnd + mDsmExtension);
-    std::cout << "Reading file " << dsmPath << std::endl;
-
-    geoCell->setGeoReference(createGeoReference(dsmPath));
-
-    std::cout << "created " << *geoCell << std::endl;
-
+    geoCell->setGeoReference(createGeoReference(mDsmRoot + geoCell->asString() + mDsmEnd + mDsmExtension));
     return geoCell;
   }
 private:
@@ -100,11 +93,11 @@ int main(int argc, char* argv[])
     std::cout << "Input extent = " << inputExtent << std::endl;
 
     // calculate the tile(s) for this extent
-    const int xMin(Round(inputExtent.topLeft().lon));      // bottom left corner of the extent is the minimum geocell coordinate
+    const int xMin(Round(inputExtent.leftTop().lon));      // bottom left corner of the extent is the minimum geocell coordinate
     const int yMin(Round(inputExtent.bottomRight().lat));
 
     const int xMax(Round(inputExtent.bottomRight().lon));  // top right  corner of the extent is the maximum geocell coordinate
-    const int yMax(Round(inputExtent.topLeft().lat));
+    const int yMax(Round(inputExtent.leftTop().lat));
 
     GeoCell::Vector geoCells;
     {
@@ -113,8 +106,7 @@ int main(int argc, char* argv[])
       {
         for (int x = xMin; x <= xMax; ++x)
         {
-          GeoCell::Ptr geocellPtr = geoCellFactory.create(x, y);  // Geocell bottom left corner
-          geoCells.push_back(geocellPtr);
+          geoCells.push_back(geoCellFactory.create(x, y));
         }
       }
     }

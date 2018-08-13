@@ -16,6 +16,7 @@
     <ClInclude Include="src\Geo.h" />
     <ClInclude Include="src\GeoCell.h" />
     <ClInclude Include="src\GeoReference.h" />
+    <ClInclude Include="src\Line.h" />
     <ClInclude Include="src\Types.h" />
   </ItemGroup>
   <ItemGroup>

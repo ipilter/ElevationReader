@@ -27,7 +27,11 @@ struct Geo
       throw std::runtime_error("invalid Geo coordinate");
     }
   }
-
+  static const Geo& invalid()
+  {
+    static const Geo invalidValue(1000, 1000);
+    return invalidValue;
+  };
   double lon;
   double lat;
 };
@@ -39,5 +43,9 @@ inline bool operator == (const Geo& a, const Geo& b)
 
 inline std::ostream& operator << (std::ostream& stream, const Geo& geo)
 {
+  if (geo == Geo::invalid())
+  {
+    return stream << std::fixed << "[invalid]";
+  }
   return stream << std::fixed << "[" << geo.lon << ", " << geo.lat << "]";
 }

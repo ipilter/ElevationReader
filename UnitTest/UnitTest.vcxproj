@@ -87,6 +87,7 @@
     <ClCompile Include="GeoCellUnitTest.cpp" />
     <ClCompile Include="GeoReferenceUnitTest.cpp" />
     <ClCompile Include="GeoUnitTest.cpp" />
+    <ClCompile Include="LineUnitTest.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

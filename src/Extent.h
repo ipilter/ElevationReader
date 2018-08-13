@@ -5,6 +5,7 @@
 #include <vector>
 
 #include "Geo.h"
+#include "Line.h"
 
 class Extent
 {
@@ -13,50 +14,50 @@ public:
          , const double& top
          , const double right
          , const double bottom)
-    : mTopLeft(left, top)
-    , mBottomRight(right, bottom)
+    : mLeftTop(left, top)
+    , mRightBottom(right, bottom)
   { 
     validate();
   }
-  Extent(const Geo& tl
-         , const Geo& br)
-    : mTopLeft(tl)
-    , mBottomRight(br)
+  Extent(const Geo& lt
+         , const Geo& rb)
+    : mLeftTop(lt)
+    , mRightBottom(rb)
   { 
     validate();
   }
 public:
-  const Geo& topLeft() const
+  const Geo& leftTop() const
   {
-    return mTopLeft;
+    return mLeftTop;
   }
   const Geo& bottomRight() const
   {
-    return mBottomRight;
+    return mRightBottom;
   }
   const Geo topRight() const
   {
-    return Geo(mBottomRight.lon, mTopLeft.lat);
+    return Geo(mRightBottom.lon, mLeftTop.lat);
   }
   const Geo bottomLeft() const
   {
-    return Geo(mTopLeft.lon, mBottomRight.lat);
+    return Geo(mLeftTop.lon, mRightBottom.lat);
   }
   double left() const
   {
-    return mTopLeft.lon;
+    return mLeftTop.lon;
   }
   double top() const
   {
-    return mTopLeft.lat;
+    return mLeftTop.lat;
   }
   double right() const
   {
-    return mBottomRight.lon;
+    return mRightBottom.lon;
   }
   double bottom() const
   {
-    return mBottomRight.lat;
+    return mRightBottom.lat;
   }
   Extent intersect(const Extent& rhs) const
   {
@@ -65,25 +66,25 @@ public:
 private:
   void validate() const
   {
-    mTopLeft.validate();
-    mBottomRight.validate();
-    if(mTopLeft.lon > mBottomRight.lon
-       || mTopLeft.lat < mBottomRight.lat)
+    mLeftTop.validate();
+    mRightBottom.validate();
+    if(mLeftTop.lon > mRightBottom.lon
+       || mLeftTop.lat < mRightBottom.lat)
     {
       throw std::runtime_error("invalid extent coordinates");
     }
   }
 private:
-  Geo mTopLeft;
-  Geo mBottomRight;
+  Geo mLeftTop;
+  Geo mRightBottom;
 };
 
 inline std::ostream& operator << (std::ostream& stream, const Extent& extent)
 {
-  return stream << "TopLeft = " << extent.topLeft() << " BottomRight = " << extent.bottomRight();
+  return stream << "TopLeft = " << extent.leftTop() << " BottomRight = " << extent.bottomRight();
 }
 
 inline bool operator == (const Extent& a, const Extent& b)
 {
-  return a.topLeft() == b.topLeft() && a.bottomRight() == b.bottomRight();
+  return a.leftTop() == b.leftTop() && a.bottomRight() == b.bottomRight();
 }

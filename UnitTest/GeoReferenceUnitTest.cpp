@@ -18,14 +18,14 @@
 
 TEST(testGeoReference, transformTest)
 {
-  const Vec2 topLeft(0.0, 1.0);
+  const Vec2 leftTop(0.0, 1.0);
   const Vec2i imageSize(100, 100);
 
   const Vec2 tileSize(1.0, 1.0);
 
   const Vec2 imageResolution(tileSize.x / imageSize.x, tileSize.y / imageSize.y);
 
-  double transform[6] = { topLeft.x, imageResolution.x, 0.0, topLeft.y, 0.0, -imageResolution.y };
+  double transform[6] = { leftTop.x, imageResolution.x, 0.0, leftTop.y, 0.0, -imageResolution.y };
   GeoReference geoReference(transform, imageSize.x, imageSize.y);
 
   EXPECT_EQ(Geo(0.0,        tileSize.y), geoReference.imgToGeo(Vec2i(0,           0)));
@@ -36,14 +36,14 @@ TEST(testGeoReference, transformTest)
 
 TEST(testGeoReference, inverseTransformTest)
 {
-  const Vec2 topLeft(0.0, 1.0);
+  const Vec2 leftTop(0.0, 1.0);
   const Vec2i imageSize(100, 100);
 
   const Vec2 tileSize(1.0, 1.0);
 
   const Vec2 imageResolution(tileSize.x / imageSize.x, tileSize.y / imageSize.y);
 
-  double transform[6] = { topLeft.x, imageResolution.x, 0.0, topLeft.y, 0.0, -imageResolution.y };
+  double transform[6] = { leftTop.x, imageResolution.x, 0.0, leftTop.y, 0.0, -imageResolution.y };
   GeoReference geoReference(transform, imageSize.x, imageSize.y);
 
   EXPECT_EQ(Geo(tileSize.x, tileSize.y), geoReference.imgToGeo(Vec2i(imageSize.x, 0)));
