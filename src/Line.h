@@ -9,16 +9,16 @@ public:
     : mLeftTop(leftTop)
     , mRightBottom(rightBottom)
   { }
-  Geo intersect(const Line& line) const
+  Geo intersect(const Line& rhs) const
   {
-    const double denominator((mLeftTop.lon - mRightBottom.lon) * (line.mLeftTop.lat - line.mRightBottom.lat) -
-                             (mLeftTop.lat - mRightBottom.lat) * (line.mLeftTop.lon - line.mRightBottom.lon));
+    const double denominator((mLeftTop.lon - mRightBottom.lon) * (rhs.mLeftTop.lat - rhs.mRightBottom.lat) -
+                             (mLeftTop.lat - mRightBottom.lat) * (rhs.mLeftTop.lon - rhs.mRightBottom.lon));
     if (!Equal(denominator, 0.0))
     {
       const double f1(mLeftTop.lon * mRightBottom.lat - mLeftTop.lat * mRightBottom.lon);
-      const double f2(line.mLeftTop.lon * line.mRightBottom.lat - line.mLeftTop.lat * line.mRightBottom.lon);
-      return Geo((f1 * (line.mLeftTop.lon - line.mRightBottom.lon) - (mLeftTop.lon - mRightBottom.lon) * f2) / denominator,
-                 (f1 * (line.mLeftTop.lat - line.mRightBottom.lat) - (mLeftTop.lat - mRightBottom.lat) * f2) / denominator);
+      const double f2(rhs.mLeftTop.lon * rhs.mRightBottom.lat - rhs.mLeftTop.lat * rhs.mRightBottom.lon);
+      return Geo((f1 * (rhs.mLeftTop.lon - rhs.mRightBottom.lon) - (mLeftTop.lon - mRightBottom.lon) * f2) / denominator,
+                 (f1 * (rhs.mLeftTop.lat - rhs.mRightBottom.lat) - (mLeftTop.lat - mRightBottom.lat) * f2) / denominator);
     }
     return Geo::invalid();
   }

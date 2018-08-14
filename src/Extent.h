@@ -31,15 +31,15 @@ public:
   {
     return mLeftTop;
   }
-  const Geo& bottomRight() const
+  const Geo& rightBottom() const
   {
     return mRightBottom;
   }
-  const Geo topRight() const
+  const Geo rightTop() const
   {
     return Geo(mRightBottom.lon, mLeftTop.lat);
   }
-  const Geo bottomLeft() const
+  const Geo leftBottom() const
   {
     return Geo(mLeftTop.lon, mRightBottom.lat);
   }
@@ -59,9 +59,31 @@ public:
   {
     return mRightBottom.lat;
   }
+  bool overlap(const Extent& rhs) const
+  {
+    return !(mLeftTop.lon >= rhs.mRightBottom.lon || rhs.mLeftTop.lon >= mRightBottom.lon ||
+             mLeftTop.lat <= rhs.mRightBottom.lat || rhs.mLeftTop.lat <= mRightBottom.lat);
+  }
   Extent intersect(const Extent& rhs) const
   {
-    return Extent(0, 0, 0, 0);
+    const Extent& lhs(*this);
+
+    const Line lhs0(lhs.leftTop(), lhs.rightTop());
+    const Line lhs1(lhs.leftTop(), lhs.leftBottom());
+    const Line lhs2(lhs.rightBottom(), lhs.leftBottom());
+    const Line lhs3(lhs.rightBottom(), lhs.rightTop());
+
+    const Line rhs0(rhs.leftTop(), rhs.rightTop());
+    const Line rhs1(rhs.leftTop(), rhs.leftBottom());
+    const Line rhs2(rhs.rightBottom(), rhs.leftBottom());
+    const Line rhs3(rhs.rightBottom(), rhs.rightTop());
+
+    return invalid();
+  }
+  static Extent invalid()
+  {
+    static const Extent invalidValue(0, 0, 0, 0);
+    return invalidValue;
   }
 private:
   void validate() const
@@ -81,10 +103,10 @@ private:
 
 inline std::ostream& operator << (std::ostream& stream, const Extent& extent)
 {
-  return stream << "TopLeft = " << extent.leftTop() << " BottomRight = " << extent.bottomRight();
+  return stream << "TopLeft = " << extent.leftTop() << " BottomRight = " << extent.rightBottom();
 }
 
 inline bool operator == (const Extent& a, const Extent& b)
 {
-  return a.leftTop() == b.leftTop() && a.bottomRight() == b.bottomRight();
+  return a.leftTop() == b.leftTop() && a.rightBottom() == b.rightBottom();
 }

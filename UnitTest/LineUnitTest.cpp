@@ -39,8 +39,8 @@ namespace
 TEST(testLine, constructionSuccessTest)
 {
   GeoCoordinateArray geoCoordinateList;
-  geoCoordinateList.push_back(Vec2(0.0, 0.0));
-  geoCoordinateList.push_back(Vec2(10.0, 0.0));
+  geoCoordinateList.push_back(Geo(0.0, 0.0));
+  geoCoordinateList.push_back(Geo(10.0, 0.0));
 
   LineList lines(createLines(geoCoordinateList));
   
@@ -55,10 +55,15 @@ TEST(testLine, constructionSuccessTest)
 TEST(testLine, intersectSuccessTest)
 {
   GeoCoordinateArray geoCoordinateList;
-  geoCoordinateList.push_back(Vec2(-10.0, 0.0));
-  geoCoordinateList.push_back(Vec2(10.0, 0.0));
-  geoCoordinateList.push_back(Vec2(0.0, -10.0));
-  geoCoordinateList.push_back(Vec2(0.0, 10.0));
+  geoCoordinateList.push_back(Geo(-10.0, 0.0));
+  geoCoordinateList.push_back(Geo(10.0, 0.0));
+  geoCoordinateList.push_back(Geo(0.0, -10.0));
+  geoCoordinateList.push_back(Geo(0.0, 10.0));
+
+  geoCoordinateList.push_back(Geo(-10.0, 0.0));
+  geoCoordinateList.push_back(Geo(10.0, 0.0));
+  geoCoordinateList.push_back(Geo(0.0, -10.0));
+  geoCoordinateList.push_back(Geo(0.0, 10.0));
 
   LineList lines(createLines(geoCoordinateList));
   if (!isEven(lines.size()))
@@ -78,15 +83,15 @@ TEST(testLine, intersectSuccessTest)
 TEST(testLine, intersectFailTest)
 {
   GeoCoordinateArray geoCoordinateList;
-  geoCoordinateList.push_back(Vec2(-10.0, 0.0));
-  geoCoordinateList.push_back(Vec2(10.0, 0.0));
-  geoCoordinateList.push_back(Vec2(-10.0, 1.0));
-  geoCoordinateList.push_back(Vec2(10.0, 1.0));
+  geoCoordinateList.push_back(Geo(-10.0, 0.0));
+  geoCoordinateList.push_back(Geo(10.0, 0.0));
+  geoCoordinateList.push_back(Geo(-10.0, 1.0));
+  geoCoordinateList.push_back(Geo(10.0, 1.0));
 
-  geoCoordinateList.push_back(Vec2(0.0, -10.0));
-  geoCoordinateList.push_back(Vec2(0.0, 10.0));
-  geoCoordinateList.push_back(Vec2(1.0, -10.0));
-  geoCoordinateList.push_back(Vec2(1.0, 10.0));
+  geoCoordinateList.push_back(Geo(0.0, -10.0));
+  geoCoordinateList.push_back(Geo(0.0, 10.0));
+  geoCoordinateList.push_back(Geo(1.0, -10.0));
+  geoCoordinateList.push_back(Geo(1.0, 10.0));
 
 
   LineList lines(createLines(geoCoordinateList));

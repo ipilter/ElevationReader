@@ -16,17 +16,17 @@ struct GeoCell
   typedef std::vector<Ptr> Vector;
 
   GeoCell()
-    : bottomLeft(0, 0)
+    : leftBottom(0, 0)
   {
     validate();
   }
   GeoCell(const int x, const int y)
-    : bottomLeft(x, y)
+    : leftBottom(x, y)
   {
     validate();
   }
   explicit GeoCell(const Vec2i& v)
-    : bottomLeft(v)
+    : leftBottom(v)
   { 
     validate();
   }
@@ -42,13 +42,13 @@ struct GeoCell
   {
     static const std::string ewChars("EW");
     static const std::string nsChars("NS");
-    const size_t lonIdx(bottomLeft.x >= 0.0 ? 0 : 1);
-    const size_t latIdx(bottomLeft.y >= 0.0 ? 0 : 1);
+    const size_t lonIdx(leftBottom.x >= 0.0 ? 0 : 1);
+    const size_t latIdx(leftBottom.y >= 0.0 ? 0 : 1);
 
     // stringify as Lat-Lon format
     std::stringstream ss;
-    ss << nsChars[latIdx] << std::setw(3) << std::setfill('0') << std::abs(bottomLeft.y)
-       << ewChars[lonIdx] << std::setw(3) << std::setfill('0') << std::abs(bottomLeft.x);
+    ss << nsChars[latIdx] << std::setw(3) << std::setfill('0') << std::abs(leftBottom.y)
+       << ewChars[lonIdx] << std::setw(3) << std::setfill('0') << std::abs(leftBottom.x);
     return ss.str();
   }
 private:
@@ -56,13 +56,13 @@ private:
   {
     static const int maxLon(179);
     static const int maxLat(89);
-    if (bottomLeft.x < -maxLon || bottomLeft.x > maxLon || bottomLeft.y < -maxLat || bottomLeft.y > maxLat)
+    if (leftBottom.x < -maxLon || leftBottom.x > maxLon || leftBottom.y < -maxLat || leftBottom.y > maxLat)
     {
       throw std::runtime_error("invalid geocell coordinate: " + asString());
     }
   }
 public:
-  Vec2i bottomLeft;
+  Vec2i leftBottom;
   GeoReference::Ptr mGeoReference;
 };
 

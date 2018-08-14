@@ -94,9 +94,9 @@ int main(int argc, char* argv[])
 
     // calculate the tile(s) for this extent
     const int xMin(Round(inputExtent.leftTop().lon));      // bottom left corner of the extent is the minimum geocell coordinate
-    const int yMin(Round(inputExtent.bottomRight().lat));
+    const int yMin(Round(inputExtent.rightBottom().lat));
 
-    const int xMax(Round(inputExtent.bottomRight().lon));  // top right  corner of the extent is the maximum geocell coordinate
+    const int xMax(Round(inputExtent.rightBottom().lon));  // top right  corner of the extent is the maximum geocell coordinate
     const int yMax(Round(inputExtent.leftTop().lat));
 
     GeoCell::Vector geoCells;

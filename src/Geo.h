@@ -14,7 +14,7 @@ struct Geo
     : lon(x)
     , lat(y)
   { }
-  Geo(const Vec2& v)
+  explicit Geo(const Vec2& v)
     : lon(v.x)
     , lat(v.y)
   { }
@@ -39,6 +39,19 @@ struct Geo
 inline bool operator == (const Geo& a, const Geo& b)
 {
   return Equal(a.lon, b.lon) && Equal(a.lat, b.lat);
+}
+
+inline bool operator < (const Geo& a, const Geo& b)
+{
+  if (a.lon < b.lon)
+  {
+    return true;
+  }
+  if (Equal(a.lon, b.lon))
+  {
+    return a.lat < b.lat;
+  }
+  return false;
 }
 
 inline std::ostream& operator << (std::ostream& stream, const Geo& geo)
