@@ -3,6 +3,7 @@
 #include <stdexcept>
 #include <map>
 #include <vector>
+#include <algorithm>
 
 #include "Geo.h"
 #include "Line.h"
@@ -12,8 +13,8 @@ class Extent
 public:
   Extent(const double& left
          , const double& top
-         , const double right
-         , const double bottom)
+         , const double& right
+         , const double& bottom)
     : mLeftTop(left, top)
     , mRightBottom(right, bottom)
   { 
@@ -43,44 +44,41 @@ public:
   {
     return Geo(mLeftTop.lon, mRightBottom.lat);
   }
-  double left() const
+  const double& left() const
   {
     return mLeftTop.lon;
   }
-  double top() const
+  const double& top() const
   {
     return mLeftTop.lat;
   }
-  double right() const
+  const double& right() const
   {
     return mRightBottom.lon;
   }
-  double bottom() const
+  const double& bottom() const
   {
     return mRightBottom.lat;
   }
   bool overlap(const Extent& rhs) const
   {
-    return !(mLeftTop.lon >= rhs.mRightBottom.lon || rhs.mLeftTop.lon >= mRightBottom.lon ||
-             mLeftTop.lat <= rhs.mRightBottom.lat || rhs.mLeftTop.lat <= mRightBottom.lat);
+    return !(mLeftTop.lon >= rhs.mRightBottom.lon ||
+             rhs.mLeftTop.lon >= mRightBottom.lon ||
+             mLeftTop.lat <= rhs.mRightBottom.lat ||
+             rhs.mLeftTop.lat <= mRightBottom.lat);
   }
-  Extent intersect(const Extent& rhs) const
+  Extent intersects(const Extent& rhs) const
   {
-    const Extent& lhs(*this);
-
-    const Line lhs0(lhs.leftTop(), lhs.rightTop());
-    const Line lhs1(lhs.leftTop(), lhs.leftBottom());
-    const Line lhs2(lhs.rightBottom(), lhs.leftBottom());
-    const Line lhs3(lhs.rightBottom(), lhs.rightTop());
-
-    const Line rhs0(rhs.leftTop(), rhs.rightTop());
-    const Line rhs1(rhs.leftTop(), rhs.leftBottom());
-    const Line rhs2(rhs.rightBottom(), rhs.leftBottom());
-    const Line rhs3(rhs.rightBottom(), rhs.rightTop());
-
-    return invalid();
+    if (!overlap(rhs))
+    {
+      return invalid();
+    }
+    return Extent(Geo(std::max(left(), rhs.left()),
+                      std::min(top(), rhs.top())),
+                  Geo(std::min(right(), rhs.right()),
+                      std::max(bottom(), rhs.bottom())));
   }
-  static Extent invalid()
+  static const Extent& invalid()
   {
     static const Extent invalidValue(0, 0, 0, 0);
     return invalidValue;

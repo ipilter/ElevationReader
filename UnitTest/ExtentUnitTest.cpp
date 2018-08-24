@@ -47,7 +47,7 @@ TEST(testExtent, nonOverlapingTest)
   EXPECT_FALSE(c.overlap(a));
 }
 
-TEST(testExtent, overlapingTest)
+TEST(testExtent, overlapingTestAInB)
 {
   TopLeftBottomRightList tlbrList;
   tlbrList.push_back(std::make_pair(Geo(0, 1), Geo(2, 0)));
@@ -60,18 +60,141 @@ TEST(testExtent, overlapingTest)
   EXPECT_TRUE(b.overlap(a));
 }
 
-TEST(testExtent, intersectTest)
+// b inside a
+TEST(testExtent, intersectTestAInsideB)
 {
-  TopLeftBottomRightList tlbrList;
-  tlbrList.push_back(std::make_pair(Geo(0, 2), Geo(2, 0)));
-  tlbrList.push_back(std::make_pair(Geo(1, 3), Geo(3, 1)));
+  {
+    TopLeftBottomRightList tlbrList;
+    tlbrList.push_back(std::make_pair(Geo(0, 10), Geo(10, 0)));
+    tlbrList.push_back(std::make_pair(Geo(1, 3), Geo(3, 1)));
 
-  const Extent expected(1, 2, 2, 1);
+    const Extent expected(1, 3, 3, 1);
 
-  const Extent a(tlbrList[0].first, tlbrList[0].second);
-  const Extent b(tlbrList[1].first, tlbrList[1].second);
+    const Extent a(tlbrList[0].first, tlbrList[0].second);
+    const Extent b(tlbrList[1].first, tlbrList[1].second);
 
-  const Extent intersection(a.intersect(b));
+    const Extent intersection(a.intersects(b));
 
-  EXPECT_EQ(expected, intersection);
+    EXPECT_EQ(expected, intersection);
+  }
+}
+
+// b touches a at bottom left
+TEST(testExtent, intersectTestBottomLeft)
+{
+  {
+    TopLeftBottomRightList tlbrList;
+    tlbrList.push_back(std::make_pair(Geo(0, 2), Geo(2, 0)));
+    tlbrList.push_back(std::make_pair(Geo(1, 3), Geo(3, 1)));
+
+    const Extent expected(1, 2, 2, 1);
+
+    const Extent a(tlbrList[0].first, tlbrList[0].second);
+    const Extent b(tlbrList[1].first, tlbrList[1].second);
+
+    EXPECT_EQ(expected, a.intersects(b));
+    EXPECT_EQ(expected, b.intersects(a));
+  }
+}
+
+// b touches a at bottom right
+TEST(testExtent, intersectTestBottomRigth)
+{
+  {
+    TopLeftBottomRightList tlbrList;
+    tlbrList.push_back(std::make_pair(Geo(2, 2), Geo(4, 0)));
+    tlbrList.push_back(std::make_pair(Geo(1, 3), Geo(3, 1)));
+
+    const Extent expected(2, 2, 3, 1);
+
+    const Extent a(tlbrList[0].first, tlbrList[0].second);
+    const Extent b(tlbrList[1].first, tlbrList[1].second);
+
+    EXPECT_EQ(expected, a.intersects(b));
+    EXPECT_EQ(expected, b.intersects(a));
+  }
+}
+
+// b touches a at top left
+TEST(testExtent, intersectTestTopLeft)
+{
+  {
+    TopLeftBottomRightList tlbrList;
+    tlbrList.push_back(std::make_pair(Geo(0, 4), Geo(2, 2)));
+    tlbrList.push_back(std::make_pair(Geo(1, 3), Geo(3, 1)));
+
+    const Extent expected(1, 3, 2, 2);
+
+    const Extent a(tlbrList[0].first, tlbrList[0].second);
+    const Extent b(tlbrList[1].first, tlbrList[1].second);
+
+    EXPECT_EQ(expected, a.intersects(b));
+    EXPECT_EQ(expected, b.intersects(a));
+  }
+}
+
+// b touches a at top right
+TEST(testExtent, intersectTestTopRight)
+{
+  {
+    TopLeftBottomRightList tlbrList;
+    tlbrList.push_back(std::make_pair(Geo(2, 4), Geo(4, 2)));
+    tlbrList.push_back(std::make_pair(Geo(1, 3), Geo(3, 1)));
+
+    const Extent expected(2, 3, 3, 2);
+
+    const Extent a(tlbrList[0].first, tlbrList[0].second);
+    const Extent b(tlbrList[1].first, tlbrList[1].second);
+
+    EXPECT_EQ(expected, a.intersects(b));
+    EXPECT_EQ(expected, b.intersects(a));
+  }
+}
+
+// c between a b, a and b touches horizontaly
+TEST(testExtent, intersectTestCInAAndBHorizontaly)
+{
+  {
+    TopLeftBottomRightList tlbrList;
+    tlbrList.push_back(std::make_pair(Geo(0, 10), Geo(10, 0)));
+    tlbrList.push_back(std::make_pair(Geo(0, 0), Geo(10, -10)));
+    tlbrList.push_back(std::make_pair(Geo(2, 2), Geo(4, -2)));
+
+    const Extent expected_ac(2, 2, 4, 0);
+    const Extent expected_bc(2, 0, 4, -2);
+
+    const Extent a(tlbrList[0].first, tlbrList[0].second);
+    const Extent b(tlbrList[1].first, tlbrList[1].second);
+    const Extent c(tlbrList[2].first, tlbrList[2].second);
+
+    const Extent intersection_ac(a.intersects(c));
+    const Extent intersection_bc(b.intersects(c));
+
+    EXPECT_EQ(expected_ac, intersection_ac);
+    EXPECT_EQ(expected_bc, intersection_bc);
+  }
+}
+
+// c between a b, a and b touches verticaly
+TEST(testExtent, intersectTestCInAAndBVerticaly)
+{
+  {
+    TopLeftBottomRightList tlbrList;
+    tlbrList.push_back(std::make_pair(Geo(-10, 10), Geo(0, 0)));
+    tlbrList.push_back(std::make_pair(Geo(0, 10), Geo(10, 0)));
+    tlbrList.push_back(std::make_pair(Geo(-2, 4), Geo(2, 2)));
+
+    const Extent expected_ac(-2, 4, 0, 2);
+    const Extent expected_bc(0, 4, 2, 2);
+
+    const Extent a(tlbrList[0].first, tlbrList[0].second);
+    const Extent b(tlbrList[1].first, tlbrList[1].second);
+    const Extent c(tlbrList[2].first, tlbrList[2].second);
+
+    const Extent intersection_ac(a.intersects(c));
+    const Extent intersection_bc(b.intersects(c));
+
+    EXPECT_EQ(expected_ac, intersection_ac);
+    EXPECT_EQ(expected_bc, intersection_bc);
+  }
 }
