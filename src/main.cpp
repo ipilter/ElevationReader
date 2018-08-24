@@ -129,9 +129,9 @@ int main(int argc, char* argv[])
       std::cout << "Tile: geocell = " << *(*it)->geoCell() << " Extent: " << (*it)->extent() << std::endl;
     }
 
-	// For all tile in tiles
-	//  Open the tif image corresponding to the given geocell
-	//  Read elevation data from the image inside the tile`s extent
+  // For all tile in tiles
+  //  Open the tif image corresponding to the given geocell
+  //  Read elevation data from the image inside the tile`s extent
     std::cout << "Done." << std::endl;
   }
   catch (const std::exception& e)
