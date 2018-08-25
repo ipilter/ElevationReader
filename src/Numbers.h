@@ -22,3 +22,14 @@ inline int Round(const double d)
 {
   return static_cast<int>(std::floor(d));
 }
+
+template<class T>
+inline T parseNumber(const std::string& str)
+{
+  T number(0);
+  if (!(std::istringstream(str) >> number))
+  {
+    throw std::runtime_error(std::string("cannot parse ") + str + " as number");
+  }
+  return number;
+}

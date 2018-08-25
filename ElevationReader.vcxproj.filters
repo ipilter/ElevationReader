@@ -23,13 +23,25 @@
     <ClInclude Include="src\Types.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Floating.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Line.h">
       <Filter>Source Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Extent.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Numbers.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Pixel.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Tile.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GeoCellFactory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\GDalWrapper.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

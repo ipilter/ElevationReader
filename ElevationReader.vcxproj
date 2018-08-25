@@ -12,11 +12,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Extent.h" />
-    <ClInclude Include="src\Floating.h" />
+    <ClInclude Include="src\GDalWrapper.h" />
+    <ClInclude Include="src\GeoCellFactory.h" />
+    <ClInclude Include="src\Numbers.h" />
     <ClInclude Include="src\Geo.h" />
     <ClInclude Include="src\GeoCell.h" />
     <ClInclude Include="src\GeoReference.h" />
     <ClInclude Include="src\Line.h" />
+    <ClInclude Include="src\Pixel.h" />
+    <ClInclude Include="src\Tile.h" />
     <ClInclude Include="src\Types.h" />
   </ItemGroup>
   <ItemGroup>

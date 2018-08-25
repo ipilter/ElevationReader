@@ -3,75 +3,14 @@
 #include <iomanip>
 #include <memory>
 
-#pragma warning(push)
-  #pragma warning(disable:4251) // std string without dll interface
-  #include <gdal_priv.h>
-#pragma warning(pop)
-
+#include "GDalWrapper.h"
 #include "GeoReference.h"
-#include "GeoCell.h"
-
-template<class T> T parseNumber(const std::string& str);
-GeoReference::Ptr createGeoReference(const std::string& geoTiffPath);
+#include "Numbers.h"
+#include "Pixel.h"
+#include "Tile.h"
+#include "GeoCellFactory.h"
 
 //inputExtent -> tile(s) -> geocell -> georeference -> geotif
-
-class Tile
-{
-public:
-  typedef std::shared_ptr<Tile> Ptr;
-  typedef std::vector<Ptr> Vector;
-public:
-  Tile(const GeoCell::Ptr& geoCell, const Extent& extent)
-    : mGeoCell(geoCell)
-    , mExtent(extent)
-  { }
-  ~Tile()
-  { }
-public:
-  const GeoCell::Ptr geoCell() const
-  {
-    return mGeoCell;
-  }
-  const Extent& extent() const
-  {
-    return mExtent;
-  }
-private:
-  GeoCell::Ptr mGeoCell;
-  Extent mExtent;
-};
-
-class GeoCellFactory
-{
-public:
-  GeoCellFactory(const std::string& dsmRoot)
-    : mDsmRoot(createRoot(dsmRoot))
-    , mDsmEnd("_AVE_DSM")
-    , mDsmExtension(".tif")
-  {}
-public:
-  GeoCell::Ptr create(int x, int y)
-  {
-    GeoCell::Ptr geoCell(new GeoCell(x, y));
-    geoCell->setGeoReference(createGeoReference(mDsmRoot + geoCell->asString() + mDsmEnd + mDsmExtension));
-    return geoCell;
-  }
-private:
-  std::string createRoot(const std::string& dsmRoot)
-  {
-    std::string root(dsmRoot);
-    if (root[root.size() - 1] == '\\')
-    {
-      return dsmRoot;
-    }
-    return root += "\\";
-  }
-private:
-  const std::string mDsmRoot;
-  const std::string mDsmEnd;
-  const std::string mDsmExtension;
-};
 
 // dsmRoot  lat       lon       lat       lon
 // d:\dsm   46.840104 17.482264 46.820836 17.513521
@@ -126,7 +65,13 @@ int main(int argc, char* argv[])
 
     for (Tile::Vector::const_iterator it(tiles.begin()); it != tiles.end(); ++it)
     {
+      const Pixel imgLeftTop((*it)->geoCell()->geoReference()->geoToImg((*it)->extent().leftTop()));
+      const Pixel imgRightBottom((*it)->geoCell()->geoReference()->geoToImg((*it)->extent().rightBottom()));
+
       std::cout << "Tile: geocell = " << *(*it)->geoCell() << " Extent: " << (*it)->extent() << std::endl;
+
+      std::cout << "      left top pixel = " << imgLeftTop.x << ", " << imgLeftTop.y << std::endl;
+      std::cout << "      right bottom pixel = " << imgRightBottom.x << ", " << imgRightBottom.y << std::endl;
     }
 
   // For all tile in tiles
@@ -139,39 +84,6 @@ int main(int argc, char* argv[])
     std::cout << "Error: " << e.what() << std::endl;
   }
   return 0;
-}
-
-GeoReference::Ptr createGeoReference(const std::string& geoTiffPath)
-{
-  GDALDataset* pTiffDataSet((GDALDataset*)GDALOpen(geoTiffPath.c_str(), static_cast<GDALAccess>(GA_ReadOnly)));
-  if (!pTiffDataSet)
-  {
-    throw std::runtime_error(std::string("could not open file: ") + geoTiffPath);
-  }
-
-  const int width(pTiffDataSet->GetRasterXSize());
-  const int height(pTiffDataSet->GetRasterYSize());
-
-  double geoTransform[6] = { 0 };
-  if (pTiffDataSet->GetGeoTransform(geoTransform) != CE_None)
-  {
-    throw std::runtime_error(std::string("could not get geo transform from image"));
-  }
-  GDALClose(pTiffDataSet);
-  pTiffDataSet = NULL;
-
-  return GeoReference::Ptr(new GeoReference(geoTransform, width, height));
-}
-
-template<class T>
-T parseNumber(const std::string& str)
-{
-  T t(0);
-  if (!(std::istringstream(str) >> t))
-  {
-    throw std::runtime_error(std::string("cannot parse ") + str + " as number");
-  }
-  return t;
 }
 
 //std::cout << "GeoTiff boundaries" << std::endl
