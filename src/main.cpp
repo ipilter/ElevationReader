@@ -120,7 +120,7 @@ int main(int argc, char* argv[])
       const GeoCell::Ptr& pGeoCell((*it));
 
       // calculate the intersection of the input extent and this tile
-      const Extent tileExtent(inputExtent.intersects(pGeoCell->geoReference()->extent()));
+      const Extent tileExtent(inputExtent.intersect(pGeoCell->geoReference()->extent()));
       tiles.push_back(Tile::Ptr(new Tile(pGeoCell, tileExtent)));
     }
 

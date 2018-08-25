@@ -67,7 +67,7 @@ public:
              mLeftTop.lat <= rhs.mRightBottom.lat ||
              rhs.mLeftTop.lat <= mRightBottom.lat);
   }
-  Extent intersects(const Extent& rhs) const
+  Extent intersect(const Extent& rhs) const
   {
     if (!overlap(rhs))
     {

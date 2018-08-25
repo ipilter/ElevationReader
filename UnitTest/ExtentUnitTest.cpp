@@ -73,7 +73,7 @@ TEST(testExtent, intersectTestAInsideB)
     const Extent a(tlbrList[0].first, tlbrList[0].second);
     const Extent b(tlbrList[1].first, tlbrList[1].second);
 
-    const Extent intersection(a.intersects(b));
+    const Extent intersection(a.intersect(b));
 
     EXPECT_EQ(expected, intersection);
   }
@@ -92,8 +92,8 @@ TEST(testExtent, intersectTestBottomLeft)
     const Extent a(tlbrList[0].first, tlbrList[0].second);
     const Extent b(tlbrList[1].first, tlbrList[1].second);
 
-    EXPECT_EQ(expected, a.intersects(b));
-    EXPECT_EQ(expected, b.intersects(a));
+    EXPECT_EQ(expected, a.intersect(b));
+    EXPECT_EQ(expected, b.intersect(a));
   }
 }
 
@@ -110,8 +110,8 @@ TEST(testExtent, intersectTestBottomRigth)
     const Extent a(tlbrList[0].first, tlbrList[0].second);
     const Extent b(tlbrList[1].first, tlbrList[1].second);
 
-    EXPECT_EQ(expected, a.intersects(b));
-    EXPECT_EQ(expected, b.intersects(a));
+    EXPECT_EQ(expected, a.intersect(b));
+    EXPECT_EQ(expected, b.intersect(a));
   }
 }
 
@@ -128,8 +128,8 @@ TEST(testExtent, intersectTestTopLeft)
     const Extent a(tlbrList[0].first, tlbrList[0].second);
     const Extent b(tlbrList[1].first, tlbrList[1].second);
 
-    EXPECT_EQ(expected, a.intersects(b));
-    EXPECT_EQ(expected, b.intersects(a));
+    EXPECT_EQ(expected, a.intersect(b));
+    EXPECT_EQ(expected, b.intersect(a));
   }
 }
 
@@ -146,8 +146,8 @@ TEST(testExtent, intersectTestTopRight)
     const Extent a(tlbrList[0].first, tlbrList[0].second);
     const Extent b(tlbrList[1].first, tlbrList[1].second);
 
-    EXPECT_EQ(expected, a.intersects(b));
-    EXPECT_EQ(expected, b.intersects(a));
+    EXPECT_EQ(expected, a.intersect(b));
+    EXPECT_EQ(expected, b.intersect(a));
   }
 }
 
@@ -167,11 +167,8 @@ TEST(testExtent, intersectTestCInAAndBHorizontaly)
     const Extent b(tlbrList[1].first, tlbrList[1].second);
     const Extent c(tlbrList[2].first, tlbrList[2].second);
 
-    const Extent intersection_ac(a.intersects(c));
-    const Extent intersection_bc(b.intersects(c));
-
-    EXPECT_EQ(expected_ac, intersection_ac);
-    EXPECT_EQ(expected_bc, intersection_bc);
+    EXPECT_EQ(expected_ac, a.intersect(c));
+    EXPECT_EQ(expected_bc, b.intersect(c));
   }
 }
 
@@ -191,10 +188,7 @@ TEST(testExtent, intersectTestCInAAndBVerticaly)
     const Extent b(tlbrList[1].first, tlbrList[1].second);
     const Extent c(tlbrList[2].first, tlbrList[2].second);
 
-    const Extent intersection_ac(a.intersects(c));
-    const Extent intersection_bc(b.intersects(c));
-
-    EXPECT_EQ(expected_ac, intersection_ac);
-    EXPECT_EQ(expected_bc, intersection_bc);
+    EXPECT_EQ(expected_ac, a.intersect(c));
+    EXPECT_EQ(expected_bc, b.intersect(c));
   }
 }
