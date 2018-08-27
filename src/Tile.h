@@ -2,7 +2,9 @@
 
 #include <memory>
 #include <vector>
+
 #include "GeoCell.h"
+#include "Elevation.h"
 
 class Tile
 {
@@ -25,7 +27,16 @@ public:
   {
     return mExtent;
   }
+  const Elevation::Ptr& elevation() const
+  {
+    return mElevation;
+  }
+  void setElevation(const Elevation::Ptr& elevation)
+  {
+    mElevation = elevation;
+  }
 private:
   GeoCell::Ptr mGeoCell;
   Extent mExtent;
+  Elevation::Ptr mElevation;
 };

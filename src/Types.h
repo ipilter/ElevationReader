@@ -5,7 +5,12 @@
 
 typedef glm::ivec2 Vec2i;
 typedef glm::dvec2 Vec2;
+typedef glm::fvec2 Vec2f;
+
+typedef glm::ivec3 Vec3i;
 typedef glm::dvec3 Vec3;
+typedef glm::fvec3 Vec3f;
+
 typedef glm::mat3x2 Mat32;
 typedef glm::mat3x3 Mat33;
 

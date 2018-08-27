@@ -27,6 +27,12 @@ struct Geo
       throw std::runtime_error("invalid Geo coordinate");
     }
   }
+  Geo& operator *= (const double& scale)
+  {
+    lon *= scale;
+    lat *= scale;
+    return *this;
+  }
   static const Geo& invalid()
   {
     static const Geo invalidValue(1000, 1000);
@@ -61,4 +67,14 @@ inline std::ostream& operator << (std::ostream& stream, const Geo& geo)
     return stream << std::fixed << "[invalid]";
   }
   return stream << std::fixed << "[" << geo.lon << ", " << geo.lat << "]";
+}
+
+inline Geo operator - (const Geo& lhs, const Geo& rhs)
+{
+  return Geo(lhs.lon - rhs.lon, lhs.lat - rhs.lat);
+}
+
+inline Geo operator + (const Geo& lhs, const Geo& rhs)
+{
+  return Geo(lhs.lon + rhs.lon, lhs.lat + rhs.lat);
 }

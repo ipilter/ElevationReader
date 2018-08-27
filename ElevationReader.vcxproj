@@ -11,16 +11,22 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Elevation.h" />
     <ClInclude Include="src\Extent.h" />
     <ClInclude Include="src\GDalWrapper.h" />
     <ClInclude Include="src\GeoCellFactory.h" />
+    <ClInclude Include="src\LowIO.h" />
+    <ClInclude Include="src\MeshFactory.h" />
     <ClInclude Include="src\Numbers.h" />
     <ClInclude Include="src\Geo.h" />
     <ClInclude Include="src\GeoCell.h" />
     <ClInclude Include="src\GeoReference.h" />
     <ClInclude Include="src\Line.h" />
     <ClInclude Include="src\Pixel.h" />
+    <ClInclude Include="src\Ppm.h" />
+    <ClInclude Include="src\STLFileWriter.h" />
     <ClInclude Include="src\Tile.h" />
+    <ClInclude Include="src\Triangle.h" />
     <ClInclude Include="src\Types.h" />
   </ItemGroup>
   <ItemGroup>
